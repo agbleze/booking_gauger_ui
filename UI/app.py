@@ -175,7 +175,6 @@ def toggle_project_description(proj_desc_button_clicked: str, is_open: bool) -> 
     -------
     bool
         Has values True or False that determines whether the canvans component should be open.
-
     """
     if proj_desc_button_clicked:
         return not is_open
