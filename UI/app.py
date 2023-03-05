@@ -7,7 +7,10 @@ from sklearn.preprocessing import LabelEncoder
 import requests
 import json
 from dash.exceptions import PreventUpdate
-from helper_components import output_card, create_offcanvans, get_data_path
+from helper_components import output_card, create_offcanvans, get_data_path, create_dropdown_with_label
+from style import input_style
+from predictions_ui import prediction_layout
+
 
 #%%
 from ui_helper import request_prediction, create_encoded_data
@@ -19,17 +22,17 @@ URL = f'{HOST}:{PORT}{ENDPOINT}'
 
 #%%
 data_path = get_data_path(folder_name='UI', file_name='data_used.csv')
-data_used = pd.read_csv(data_path)
+data = pd.read_csv(data_path)
 
-data_encoded = create_encoded_data(data=data_used, columns=['city',
-                                                            'country',
-                                                            'device_class',
-                                                            'instant_booking',
-                                                            'user_verified'
-                                                            ]
-                                   )
+# data_encoded = create_encoded_data(data=data_used, columns=['city',
+#                                                             'country',
+#                                                             'device_class',
+#                                                             'instant_booking',
+#                                                             'user_verified'
+#                                                             ]
+#                                    )
 
-data_encoded
+# data_encoded
 #%%
 app = dash.Dash(__name__, external_stylesheets=[
                                                 dbc.themes.SOLAR,
@@ -60,67 +63,34 @@ app.layout = html.Div([
     ]),
     dbc.Label("Select characteristics of online visitor to predict the number of accommodation days to be booked"),
     html.Br(), html.Br(),
-    dbc.Row([dbc.Col(md=4,
-                     children=[dbc.Label('Number of session'),
-                         dcc.Dropdown(id='session',
-                                                 placeholder='Number of sessions by site visitor',
-                                                options=[
-                                                    {'label': num_session, 'value': num_session}
-                                                    for num_session in range(1,11)
-                                                ]
-                                            )
-                      ]
-                     ),
-            dbc.Col(lg=4,
-                    children=[dbc.Label('City'),
-                        dcc.Dropdown(id='city',
-                                    placeholder='city from which client visited the platform',
-                                   options=[{'label': city,
-                                             'value': city
-                                            }
-                                            for city in data_encoded['city'].unique()
-                                            ]
-                                   )
-                      ]
-                     ),
-            dbc.Col(lg=4,
-                    children=[
-                        dbc.Label('User verification status'),
-                        dcc.Dropdown(id='user_verified',
-                                           placeholder='Is the visitor verified on platform',
-                                                options=[{'label': user_verified, 'value': user_verified}
-                                                         for user_verified in data_encoded['user_verified'].unique()
-                                                         ]
-                                                )
-                                   ]
-                    )
+    dbc.Row([dbc.Col(lg=4,children=[dbc.Label('Number of session',style=input_style),
+                                html.Br(),
+                                dcc.Input(id='session',
+                                        placeholder='Number of sessions by site visitor',
+                                        min=1, max=11, type='number',
+                                        debounce=True
+                                    )
+                            ]
+                    ),
+             create_dropdown_with_label(label='City', placeholder='city from which client visited the platform',
+                                        dropdown_id='city', values_data=data['city']
+                                        ),
+            create_dropdown_with_label(label='User verification status', dropdown_id='user_verified', 
+                                       placeholder='Is the visitor verified on platform', 
+                                       values_data=data['user_verified']
+                                       ),
             ]
             ),
     html.Br(), html.Br(),
 
-    dbc.Row([dbc.Col(lg=4,
-                     children=[
-                         dbc.Label('Device type'),
-                         dcc.Dropdown(id='device',
-                                            placeholder='type of device used to access platform',
-                                            options=[{'label': device_class, 'value': device_class}
-                                                     for device_class in data_encoded['device_class'].unique()
-                                                     ]
-                                            )
-                               ]
-                     ),
-             dbc.Col(lg=4,
-                    children=[
-                        dbc.Label('Instant booking feature used?'),
-                                dcc.Dropdown(id='instant_book',
-                                                placeholder='Whether visitor used instant booking feature',
-                                                options=[
-                                                            {'label': instant_booking, 'value': instant_booking}
-                                                            for instant_booking in data_encoded['instant_booking'].unique()
-                                                        ]
-                                            )
-                                ]
-                     ),
+    dbc.Row([create_dropdown_with_label(label='Device type', dropdown_id='device', 
+                                        placeholder='type of device used to access platform',
+                                        values_data=data['device_class']
+                                        ),
+             create_dropdown_with_label(label='Instant booking feature used?',dropdown_id='instant_book',
+                                        placeholder='Whether visitor used instant booking feature', 
+                                        data=data['instant_booking']
+                                        ),
              dbc.Col([
                  #html.Br(),
                  dbc.Label(''),
