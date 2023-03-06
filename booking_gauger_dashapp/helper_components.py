@@ -1,7 +1,9 @@
 from dash import dcc, html
 import dash_bootstrap_components as dbc
-from style import cardbody_style, card_icon, cardimg_style, card_style
+from .style import cardbody_style, card_icon, cardimg_style, card_style
 import os
+from typing import Union, List
+import pandas as pd
 
 
 def output_card(id: str = None, card_label: str =None,
@@ -110,8 +112,37 @@ def create_offcanvans(id: str, title: str, is_open=False):
     )
 
 
+def create_dropdown_with_label(label: str, dropdown_id: str,
+                               placeholder: str = None, default_value: str = None,
+                               col_width: int = 4, values_data: Union[pd.DataFrame, pd.Series, List] = None,
+                               **kwargs):
+    return dbc.Col(lg=col_width,
+                    children=[dbc.Label(label, **kwargs),
+                              dcc.Dropdown(id=dropdown_id,
+                                            placeholder=placeholder,
+                                            options=[{'label': city,
+                                                        'value': city
+                                                    }
+                                                    for city in values_data.unique()
+                                                    ],
+                                            value=default_value,
+                                            **kwargs
+                                            ) 
+                            ]
+                )
+
 
 def get_data_path(folder_name, file_name):
     cwd = os.getcwd()
     return f"{cwd}/{folder_name}/{file_name}"
+
+
+
+nonselection_message = ('All parameters must be provided. Please select the \
+                       right values for all parameters from the dropdown. \
+                        Then, click on predict booking days button to know \
+                        the number of accommodation days a customer will book'
+                       )
+
+
 

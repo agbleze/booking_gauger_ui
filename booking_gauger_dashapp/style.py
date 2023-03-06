@@ -11,3 +11,10 @@ card_icon = {
     "margin": "auto"
 }
 
+input_style={"color": '#0088BC'}
+
+#app_style = {"backgroundColor": "#D83F1F"}
+
+button_style = {"backgroundColor": "#0088BC"}
+
+

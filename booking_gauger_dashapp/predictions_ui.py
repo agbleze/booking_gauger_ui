@@ -1,12 +1,12 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 import pandas as pd
-from helper_components import output_card, create_offcanvans, get_data_path, create_dropdown_with_label
-from style import input_style
+from .helper_components import output_card, create_offcanvans, get_data_path, create_dropdown_with_label
+from .style import input_style
 
 
 #%%
-data_path = get_data_path(folder_name='UI', file_name='data_used.csv')
+data_path = get_data_path(folder_name='booking_gauger_dashapp/data', file_name='data_used.csv')
 data = pd.read_csv(data_path)
 
 
@@ -53,7 +53,7 @@ prediction_layout = html.Div([dbc.Row([html.Br(), html.Br(),
                                                                     ),
                                         create_dropdown_with_label(label='Instant booking feature used?',dropdown_id='instant_book',
                                                                     placeholder='Whether visitor used instant booking feature', 
-                                                                    data=data['instant_booking']
+                                                                    values_data=data['instant_booking']
                                                                     ),
                                         dbc.Col([
                                             #html.Br(),
