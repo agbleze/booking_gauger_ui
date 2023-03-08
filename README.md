@@ -37,6 +37,10 @@ While in the root of the cloned repository, run the following command
 
 ## Expected output
 
+The expected output is the url where the app can be accessed which by defaut is http://192.168.0.168:4048 
+
+
+
 
 
 
